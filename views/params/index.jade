@@ -1,0 +1,19 @@
+h1 List of Parameters
+div#articles
+         ol
+          -each param in records
+              li                  
+                  a(href=param.title) #{param.title} 
+                  br
+                  #{param.defaultUrl} 
+                  br 
+                  a(href='/redirect/'+ param.title) (Test) 
+                  | 
+                  a(href=param.title +'/edit/') (Edit) 
+                  
+                  a(href=param.title +'/delete/') (Delete) 
+                  p
+
+p
+   a(href='/params/new') Create New Parameter
+

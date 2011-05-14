@@ -1,0 +1,11 @@
+h1 Welcome to the site
+Please Sign in Below with your email and password
+
+form(action'/login', method='POST')
+
+    input(type='text', name='user[email]', value='Email')
+    p
+    input(type='text', name='user[password]', value='Password', id='Password')
+    p
+
+    input(type="submit", value="Create Account", name ="submit")

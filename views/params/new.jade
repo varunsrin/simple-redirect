@@ -1,0 +1,16 @@
+h1 Add New Parameter
+form(action'/', method='POST')
+    div
+      label Paramenter:
+      input(type='text', name='param[title]')
+    div
+      label Description:
+      input(type='text', name='param[desc]')
+    div
+      label: Destination URL:
+      input(type='text', name='param[defaultUrl]')
+    p
+    input(type="submit", value="submit")
+
+p
+ a(href='/params/') Back to All Parameters

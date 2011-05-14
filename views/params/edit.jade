@@ -1,0 +1,16 @@
+h1 Edit #{record.title}
+form(method='POST', action='/params/'+ record.title )
+    
+    label Paramenter:
+    input(type='text', name='param[title]', value=record.title)
+    br
+    label Description:    
+    input(type='text', name='param[desc]', value=record.desc)
+    p
+    label URL:
+    input(type='text', name='param[defaultUrl]', value=record.defaultUrl)
+    p
+    input(type='hidden', name='_method', value='put')
+    p
+
+    input(type="submit", value="submit")

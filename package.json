@@ -1,0 +1,19 @@
+{
+  "name": "NodeServer2",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "directories": {
+    "lib": "."
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies":{
+     "express": "2.3.4",
+     "jade": "0.10.7",
+     "mongoose": "1.3.3"
+  }
+}

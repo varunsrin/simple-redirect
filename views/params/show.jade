@@ -1,0 +1,35 @@
+h1 #{record.title} 
+#{record.desc}
+
+       
+          
+ 
+
+h2 List of Pivots associated with this Param
+
+Default Url:
+    #{record.defaultUrl}
+    br
+    |Views:
+    #{record.counter}
+   -each pivot in record.pivots
+     div.article
+                  br
+                  #{pivot.value}
+                  br
+                  #{pivot.destination}
+                  br
+                  #{pivot.counter}
+                  br
+                  a(href= record.title + '/' + pivot.value + '/edit/') (Edit)
+                  a(href= record.title + '/' + pivot.value + '/delete/') (Delete)
+                  p
+h2 Add New Pivot
+
+form(action'/', method='POST')
+     !=partial('./pivots/new.jade')
+
+
+
+br
+a(href='/params/')  &laquo;Back to All Parameters 
