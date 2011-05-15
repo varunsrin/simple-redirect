@@ -11,7 +11,7 @@ Default Url:
     #{record.defaultUrl}
     br
     |Views:
-    #{record.counter}
+    #{record.paramcounter}
    -each pivot in record.pivots
      div.article
                   br
@@ -19,7 +19,7 @@ Default Url:
                   br
                   #{pivot.destination}
                   br
-                  #{pivot.counter}
+                  #{pivot.pivotcounter}
                   br
                   a(href= record.title + '/' + pivot.value + '/edit/') (Edit)
                   a(href= record.title + '/' + pivot.value + '/delete/') (Delete)

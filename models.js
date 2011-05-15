@@ -35,7 +35,7 @@ function validateDesc (v) {
 var Pivot = new Schema({
     value       : {type: String, validate: [validateLength, 'length error'] } 
   , destination : {type: String, validate: [validateUrl, 'url error'] } 
-  , counter     : {type: Number, default: 0 }
+  , pivotcounter : {type: Number, default: 0 }
  });
 
 
@@ -45,7 +45,7 @@ var Param = new Schema({
     title      : {type: String, validate: [validateLength, 'length error'] } 
   , desc       : {type: String, validate: [validateDesc, 'length error'] }
   , defaultUrl : {type: String, validate: [validateUrl, 'url error']  } 
-  , counter    : {type: Number, default: 0 }
+  , paramcounter : {type: Number, default: 0 }
   , pivots     : [Pivot]
 });
 

@@ -45,6 +45,7 @@ app.configure(function(){
 
 
 
+
 // Routes
 app.get('/', function(req, res){
    res.render('index.jade');
@@ -138,7 +139,6 @@ app.get('/params/new', function(req, res){
 });
 
 app.post('/params/new', function (req, res){
-   console.log(req.body.param);
     var newParam = new Param();
     newParam.title = req.body.param.title;
     newParam.desc = req.body.param.desc;
@@ -167,15 +167,19 @@ app.put('/params/:title', function(req,res, next){
         req.record.title = req.body.param.title;
         req.record.desc = req.body.param.desc;
         req.record.defaultUrl = req.body.param.defaultUrl;
-        req.record.save();
-        res.redirect('/params/');
+        req.record.save(function(err) {
+            res.redirect('/params/');
+        });
+        
 });
 
 
 //Delete Parameter
 app.get('/params/:title/delete', function(req,res, next){
-        req.record.remove();
-        res.redirect('/params/');
+        req.record.remove( function() {
+           res.redirect('/params/');
+        });
+        
 });
 
 
@@ -193,23 +197,25 @@ app.post('/params/:title', function(req,res, next){
                             value: req.body.pivot.value 
                           , destination: req.body.pivot.destination
                           });
-        req.record.save();
-        res.redirect('/params/' + req.record.title);
+        req.record.save( function() {
+           res.redirect('/params/' + req.record.title);
+        });
 });
 
 
-//udpate Pivot
+//Read Pivot
 app.get('/params/:title/:value/edit', function(req, res, next){
           res.render('pivots/edit.jade', {locals: {pivot: req.pivot,  record: req.record} }); 
 });
 
 
-
+//Update Pivot
 app.put('/params/:title/:value', function(req,res, next){
     req.pivot.destination = req.body.pivot.destination;
     req.pivot.value = req.body.pivot.value;
-    req.record.save();
-    res.redirect('/params/' + req.param('title'));
+    req.record.save( function() {
+       res.redirect('/params/' + req.param('title'));
+    });
 });
 
 
@@ -218,8 +224,10 @@ app.put('/params/:title/:value', function(req,res, next){
 //Delete Pivot
 app.get('/params/:title/:value/delete', function(req, res, next){
     req.pivot.remove();
-    req.record.save();
-    res.redirect('/params/' + req.record.title);
+    req.record.save(function () {
+       res.redirect('/params/' + req.record.title);
+    });
+    
 });
 
 
@@ -233,25 +241,26 @@ app.get('/params/:title/:value/delete', function(req, res, next){
 
 //This grabs the base case
 app.get('/redirect/:title', function(req, res, next){
-    req.record.counter++;
-    req.record.save();
-    res.redirect(req.record.defaultUrl);      
+    console.log(req.record.paramcounter);
+    console.dir(req.record.paramcounter);
+    req.record.paramcounter++;
+    req.record.save(function () {
+       res.redirect(req.record.defaultUrl);
+    });
+          
 });
 
 
 //This redirect works for all param cases with a value
 app.get('/redirect/:title/:value', function(req, res, next){
-    req.pivot.counter++;
-    req.record.save();
-    res.redirect(req.pivot.destination);
+    console.log(req.pivot.pivotcounter);
+    console.dir(req.pivot.pivotcounter);
+    req.pivot.pivotcounter++;
+    req.record.save( function() {
+       res.redirect(req.pivot.destination);
+    });
 });
 
-
-
-//Catch all for 404
-app.get('*', function(req, res, next){
-    res.render('404.jade');
-});
 
 
 
