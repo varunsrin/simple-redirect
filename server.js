@@ -3,7 +3,7 @@
 var express = require('express'),
     mongoose = require('mongoose'),
 
-    Param,
+    Redirect,
     db,
     //Server + Models
     app = module.exports = express.createServer(),
@@ -37,7 +37,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
-  Param = mongoose.model('Param');
+  Redirect = mongoose.model('Redirect');
 });
 
 
@@ -71,7 +71,7 @@ app.get('/404', function(req,res){
 }); 
 
 app.get('/500', function(req,res){
-    throw new Error('keyboard cat');
+    throw new Error('SimpleRedir - Error type 500 occured');
 }); 
 
 app.error(function(err, req, res, next){
@@ -91,17 +91,17 @@ app.error(function(err, req, res){
 // Server Parameters [app.params]
 
 app.param('title', function(req,res, next){
-    Param.findOne({"title":req.param('title')}, function(err, record){
+    Redirect.findOne({"title":req.param('title')}, function(err, redirect){
         if (err) return next(err);
-        if (!record) return next (new Error('Parameter Not Found') ); 
-        req.record = record;
+        if (!redirect) return next (new Error('Parameter Not Found') ); 
+        req.redirect = redirect;
         next();
     });         
 }); 
 
 
 app.param('value', function(req,res, next){
-        req.pivot = req.record.findPivot(req);
+        req.pivot = req.redirect.findPivot(req.param('value'));
         if (!req.pivot) return next (new Error('Pivot Not Found') ); 
         next();
 }); 
@@ -124,9 +124,9 @@ app.param('value', function(req,res, next){
 
 
 //List Parameters
-app.get('/params', function(req, res){
-   Param.find({}, function(err,records){   
-     res.render('params/index.jade', {locals: {records: records}});
+app.get('/redirects', function(req, res){
+   Redirect.find({}, function(err, redirects){   
+     res.render('redirects/index.jade', {locals: {redirects: redirects}});
    });
 });
 
@@ -134,50 +134,49 @@ app.get('/params', function(req, res){
 
 
 //Create Parameter
-app.get('/params/new', function(req, res){
-   res.render('params/new.jade', {title:'New Parameter'});
+app.get('/redirects/new', function(req, res){
+   res.render('redirects/new.jade', {title:'New Parameter'});
 });
 
-app.post('/params/new', function (req, res){
-    var newParam = new Param();
-    newParam.title = req.body.param.title;
-    newParam.desc = req.body.param.desc;
-    newParam.defaultUrl = req.body.param.defaultUrl;
-    newParam.save(function(err){
-          res.redirect('/params/');
+app.post('/redirects/new', function (req, res){
+    var newRedirect = new Redirect();
+    newRedirect.title = req.body.redirect.title;
+    newRedirect.desc = req.body.redirect.desc;
+    newRedirect.defaultUrl = req.body.redirect.defaultUrl;
+    newRedirect.save(function(err){
+          res.redirect('/redirects/');
     });
 });
 
 
 
 //View Parameter & List Pivots
-app.get('/params/:title', function(req, res, next){
-    res.render('params/show.jade', {locals: {record: req.record}});
+app.get('/redirects/:title', function(req, res, next){
+    res.render('redirects/show.jade', {locals: {redirect: req.redirect}});
 });
 
 
 
 //Update Parameter
-app.get('/params/:title/edit', function(req,res, next){
-    res.render('params/edit.jade', {locals: {record: req.record}});
+app.get('/redirects/:title/edit', function(req,res, next){
+    res.render('redirects/edit.jade', {locals: {redirect: req.redirect}});
 });
 
 
-app.put('/params/:title', function(req,res, next){
-        req.record.title = req.body.param.title;
-        req.record.desc = req.body.param.desc;
-        req.record.defaultUrl = req.body.param.defaultUrl;
-        req.record.save(function(err) {
-            res.redirect('/params/');
+app.put('/redirects/:title', function(req,res, next){
+        req.redirect.desc = req.body.redirect.desc;
+        req.redirect.defaultUrl = req.body.redirect.defaultUrl;
+        req.redirect.save(function(err) {
+            res.redirect('/redirects/');
         });
         
 });
 
 
 //Delete Parameter
-app.get('/params/:title/delete', function(req,res, next){
-        req.record.remove( function() {
-           res.redirect('/params/');
+app.get('/redirects/:title/delete', function(req,res, next){
+        req.redirect.remove( function() {
+           res.redirect('/redirects/');
         });
         
 });
@@ -192,29 +191,29 @@ app.get('/params/:title/delete', function(req,res, next){
 
 
 // Create Pivot
-app.post('/params/:title', function(req,res, next){
-        req.record.pivots.push({
+app.post('/redirects/:title', function(req,res, next){
+        req.redirect.pivots.push({
                             value: req.body.pivot.value 
                           , destination: req.body.pivot.destination
                           });
-        req.record.save( function() {
-           res.redirect('/params/' + req.record.title);
+        req.redirect.save( function() {
+           res.redirect('/redirects/' + req.redirect.title);
         });
 });
 
 
 //Read Pivot
-app.get('/params/:title/:value/edit', function(req, res, next){
-          res.render('pivots/edit.jade', {locals: {pivot: req.pivot,  record: req.record} }); 
+app.get('/redirects/:title/:value/edit', function(req, res, next){
+          res.render('pivots/edit.jade', {locals: {pivot: req.pivot,  redirect: req.redirect} }); 
 });
 
 
 //Update Pivot
-app.put('/params/:title/:value', function(req,res, next){
+app.put('/redirects/:title/:value', function(req,res, next){
     req.pivot.destination = req.body.pivot.destination;
     req.pivot.value = req.body.pivot.value;
-    req.record.save( function() {
-       res.redirect('/params/' + req.param('title'));
+    req.redirect.save( function() {
+       res.redirect('/redirects/' + req.param('title'));
     });
 });
 
@@ -222,10 +221,10 @@ app.put('/params/:title/:value', function(req,res, next){
 
 
 //Delete Pivot
-app.get('/params/:title/:value/delete', function(req, res, next){
+app.get('/redirects/:title/:value/delete', function(req, res, next){
     req.pivot.remove();
-    req.record.save(function () {
-       res.redirect('/params/' + req.record.title);
+    req.redirect.save(function () {
+       res.redirect('/redirects/' + req.redirect.title);
     });
     
 });
@@ -239,28 +238,21 @@ app.get('/params/:title/:value/delete', function(req, res, next){
  *      This Next Part deals with redirecting incoming URLs by matching to appropriate parameters & pivots
  */
 
-//This grabs the base case
-app.get('/redirect/:title', function(req, res, next){
-    console.log(req.record.paramcounter);
-    console.dir(req.record.paramcounter);
-    req.record.paramcounter++;
-    req.record.save(function () {
-       res.redirect(req.record.defaultUrl);
+app.get('/r/:title', function(req, res, next){
+    req.redirect.paramcounter++;
+    req.redirect.save(function () {
+       res.redirect(req.redirect.defaultUrl);
     });
           
 });
 
 
-//This redirect works for all param cases with a value
-app.get('/redirect/:title/:value', function(req, res, next){
-    console.log(req.pivot.pivotcounter);
-    console.dir(req.pivot.pivotcounter);
+app.get('/r/:title/:value', function(req, res, next){
     req.pivot.pivotcounter++;
-    req.record.save( function() {
+    req.redirect.save( function() {
        res.redirect(req.pivot.destination);
     });
 });
-
 
 
 

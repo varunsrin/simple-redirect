@@ -1,0 +1,16 @@
+h1 Add New Redirect
+form(action'/', method='POST')
+    div
+      label Paramenter:
+      input(type='text', name='redirect[title]')
+    div
+      label Description:
+      input(type='text', name='redirect[desc]')
+    div
+      label: Destination URL:
+      input(type='text', name='redirect[defaultUrl]')
+    p
+    input(type="submit", value="submit")
+
+p
+ a(href='/redirects/') Back to All Parameters

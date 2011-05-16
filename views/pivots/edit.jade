@@ -1,5 +1,5 @@
 h1 Edit #{pivot.value}
-form(action='/params/' + record.title + '/' + pivot.value, method='POST')
+form(action='/redirects/' + redirect.title + '/' + pivot.value, method='POST')
     label Value:
     input(type='text', name='pivot[value]', value=pivot.value)
     p

@@ -1,0 +1,40 @@
+h1 #{redirect.title} 
+#{redirect.desc}
+
+       
+          
+ 
+
+h2 Pivots 
+
+
+b
+ 'Base
+br
+#{redirect.defaultUrl}
+br
+#{redirect.paramcounter}
+             
+-each pivot in redirect.pivots
+     div.article
+                  br
+                  b
+                   #{pivot.value}
+                  br
+                  #{pivot.destination}
+                  br
+                  #{pivot.pivotcounter}
+                  br
+                  a(href= redirect.title + '/' + pivot.value + '/edit/') (Edit)
+                  a(href='/r/'+ redirect.title + '/' + pivot.value) (Test) 
+                  a(href= redirect.title + '/' + pivot.value + '/delete/') (Delete)
+                  p
+h2 Add New Pivot
+
+form(action'/', method='POST')
+     !=partial('./pivots/new.jade')
+
+
+
+br
+a(href='/redirects/')  &laquo;Back to All Parameters 

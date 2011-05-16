@@ -41,7 +41,7 @@ var Pivot = new Schema({
 
 
 //BEGIN PARAM
-var Param = new Schema({
+var Redirect = new Schema({
     title      : {type: String, validate: [validateLength, 'length error'] } 
   , desc       : {type: String, validate: [validateDesc, 'length error'] }
   , defaultUrl : {type: String, validate: [validateUrl, 'url error']  } 
@@ -49,17 +49,15 @@ var Param = new Schema({
   , pivots     : [Pivot]
 });
 
-Param.method('findPivot', function(req ){
-      //We are using a traditional find, consider using a faster algorithm
+Redirect.method('findPivot', function( value ){
       for (var i=0; i < this.pivots.length; i++){
-         if (this.pivots[i].value == req.param('value')){return this.pivots[i];}
+         if (this.pivots[i].value == value ){return this.pivots[i];}
          else {
             console.log('Failed to find a pivot'); 
-            return null;
          }
       }     
 });
 
 
 
-mongoose.model('Param', Param);
+mongoose.model('Redirect', Redirect);

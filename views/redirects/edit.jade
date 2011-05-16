@@ -1,0 +1,13 @@
+h1 Edit #{redirect.title}
+form(method='POST', action='/redirects/'+ redirect.title )
+    
+    label Description:    
+    input(type='text', name='redirect[desc]', value=redirect.desc)
+    p
+    label URL:
+    input(type='text', name='redirect[defaultUrl]', value=redirect.defaultUrl)
+    p
+    input(type='hidden', name='_method', value='put')
+    p
+
+    input(type="submit", value="submit")

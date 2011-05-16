@@ -1,0 +1,19 @@
+h1 List of Redirects
+div#articles
+         ol
+          -each redirect in redirects
+              li                  
+                  a(href=redirect.title) #{redirect.title} 
+                  br
+                  #{redirect.defaultUrl} 
+                  br 
+                  a(href='/r/'+ redirect.title) (Test) 
+                  | 
+                  a(href=redirect.title +'/edit/') (Edit) 
+                  
+                  a(class='destroy', href=redirect.title + '/delete/') (Delete) 
+                  p
+
+p
+   a(href='/redirects/new') Create New Redirect
+
