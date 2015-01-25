@@ -5,12 +5,8 @@ var express = require('express'),
 
     Redirect,
     db,
-    //Server + Models
     app = module.exports = express.createServer(),
     models = require('./models');
-
-
-
 
 
 //Development Config
@@ -27,8 +23,7 @@ app.configure('production', function(){
 });
 
 
-
-// Default Configuration
+// Default Config
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -41,28 +36,19 @@ app.configure(function(){
 });
 
 
+/*
+ *  Core Routes
+ */
 
-
-
-
-
-// Routes
 app.get('/', function(req, res){
    res.render('index.jade');
 });
-
-
-
-/*
- *  This Part deals with Error Handling
- */
 
 function NotFound(msg) {
     this.name = 'notFound';
     Error.call(this, msg);
     Error.captureStackTrace (this, arguments.callee);
 }
-
 
 NotFound.prototype.__proto__ = Error.prototype;
 
@@ -86,10 +72,6 @@ app.error(function(err, req, res){
     res.render('500.jade', {locals: {error: err }});
 });
 
-
-
-// Server Parameters [app.params]
-
 app.param('title', function(req,res, next){
     Redirect.findOne({"title":req.param('title')}, function(err, redirect){
         if (err) return next(err);
@@ -99,7 +81,6 @@ app.param('title', function(req,res, next){
     });         
 }); 
 
-
 app.param('value', function(req,res, next){
         req.pivot = req.redirect.findPivot(req.param('value'));
         if (!req.pivot) return next (new Error('Pivot Not Found') ); 
@@ -107,23 +88,11 @@ app.param('value', function(req,res, next){
 }); 
 
 
-
-
-
-
-
-
-
-
 /*
- *  This Part deals with Parametersaa
+ *  Parameter
  */
 
-
-
-
-
-//List Parameters
+// List
 app.get('/redirects', function(req, res){
    Redirect.find({}, function(err, redirects){   
      res.render('redirects/index.jade', {locals: {redirects: redirects}});
@@ -131,9 +100,7 @@ app.get('/redirects', function(req, res){
 });
 
 
-
-
-//Create Parameter
+//Create
 app.get('/redirects/new', function(req, res){
    res.render('redirects/new.jade', {title:'New Parameter'});
 });
@@ -149,19 +116,16 @@ app.post('/redirects/new', function (req, res){
 });
 
 
-
-//View Parameter & List Pivots
+//View, List Pivots
 app.get('/redirects/:title', function(req, res, next){
     res.render('redirects/show.jade', {locals: {redirect: req.redirect}});
 });
 
 
-
-//Update Parameter
+//Update
 app.get('/redirects/:title/edit', function(req,res, next){
     res.render('redirects/edit.jade', {locals: {redirect: req.redirect}});
 });
-
 
 app.put('/redirects/:title', function(req,res, next){
         req.redirect.desc = req.body.redirect.desc;
@@ -173,7 +137,7 @@ app.put('/redirects/:title', function(req,res, next){
 });
 
 
-//Delete Parameter
+//Delete
 app.get('/redirects/:title/delete', function(req,res, next){
         req.redirect.remove( function() {
            res.redirect('/redirects/');
@@ -182,15 +146,11 @@ app.get('/redirects/:title/delete', function(req,res, next){
 });
 
 
-
-
-
 /*
- *  This Part deals with Pivots
+ *  Pivot
  */
 
-
-// Create Pivot
+// Create
 app.post('/redirects/:title', function(req,res, next){
         req.redirect.pivots.push({
                             value: req.body.pivot.value 
@@ -202,13 +162,13 @@ app.post('/redirects/:title', function(req,res, next){
 });
 
 
-//Read Pivot
+//Read
 app.get('/redirects/:title/:value/edit', function(req, res, next){
           res.render('pivots/edit.jade', {locals: {pivot: req.pivot,  redirect: req.redirect} }); 
 });
 
 
-//Update Pivot
+//Update
 app.put('/redirects/:title/:value', function(req,res, next){
     req.pivot.destination = req.body.pivot.destination;
     req.pivot.value = req.body.pivot.value;
@@ -217,10 +177,7 @@ app.put('/redirects/:title/:value', function(req,res, next){
     });
 });
 
-
-
-
-//Delete Pivot
+//Delete
 app.get('/redirects/:title/:value/delete', function(req, res, next){
     req.pivot.remove();
     req.redirect.save(function () {
@@ -231,11 +188,8 @@ app.get('/redirects/:title/:value/delete', function(req, res, next){
 
 
 
-
-
-
 /*
- *      This Next Part deals with redirecting incoming URLs by matching to appropriate parameters & pivots
+ *      Redirect API Routes
  */
 
 app.get('/r/:title', function(req, res, next){
@@ -246,7 +200,6 @@ app.get('/r/:title', function(req, res, next){
           
 });
 
-
 app.get('/r/:title/:value', function(req, res, next){
     req.pivot.pivotcounter++;
     req.redirect.save( function() {
@@ -255,8 +208,7 @@ app.get('/r/:title/:value', function(req, res, next){
 });
 
 
-
-// Only listen on $ node app.js
+// Execute
 
 if (!module.parent) {
   app.listen(3000);
